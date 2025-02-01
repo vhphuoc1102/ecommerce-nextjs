@@ -1,0 +1,94 @@
+model PmsProduct {
+  productId Int @id @default(autoincrement()) @map("product_id")
+
+  brandId    Int @map("brand_id")
+  categoryId Int @map("category_id")
+
+  pmsBrand    PmsBrand    @relation(fields: [brandId], references: [brandId])
+  pmsCategory PmsCategory @relation(fields: [categoryId], references: [categoryId])
+
+  name           String  @map("name") @db.VarChar(64)
+  title          String  @map("title")
+  subtitle       String? @map("subtitle")
+  serialNumber   String  @map("serial_number") @db.VarChar(64)
+  sortOrder      Int     @default(-1) @map("sort_order")
+  quantity       Int     @default(0) @map("quantity")
+  description    String  @default("") @map("description")
+  note           String  @default("") @map("note")
+  stock          Int     @default(0) @map("stock")
+  lowStock       Int     @default(0) @map("low_stock")
+  weight         Decimal @default(0) @map("weight")
+  keyword        String  @default("") @map("keyword")
+  price          Decimal @default(0) @map("price")
+  originalPrice  Decimal @default(0) @map("original_price")
+  promotionPrice Decimal @default(0) @map("promotion_price")
+
+  status        Status        @default(ACTIVE) @map("status")
+  publishStatus PublishStatus @default(DRAFT) @map("publish_status")
+  newStatus     NewStatus     @default(NEW) @map("new_status")
+  verifyStatus  VERIFY_STATUS @default(UNVERIFIED) @map("verify_status")
+
+  @@map("pms_product")
+}
+
+model PmsSku {
+  skuId     Int @map("sku_id")
+  productId Int @map("product_id")
+
+  skuCode        String  @map("sku_code")
+  price          Decimal @map("price")
+  promotionPrice Decimal @map("promotion_price")
+  originalPrice  Decimal @map("original_price")
+  stock          Int     @map("stock")
+  lowStock       Int     @map("low_stock")
+  attribute      String  @map("attribute")
+  quantity       Int     @map("quantity")
+
+  @@id([skuId, productId])
+  @@map("pms_sku")
+}
+
+model PmsBrand {
+  brandId Int @id @default(autoincrement()) @map("brand_id")
+
+  name        String @map("name")
+  description String @default("") @map("description")
+  productCnt  Int    @default(0) @map("product_cnt")
+  sortOrder   Int    @default(-1) @map("sort_order")
+  status      Status @default(ACTIVE) @map("status")
+  keyword     String @default("") @map("keyword")
+
+  pmsProducts PmsProduct[]
+
+  @@map("pms_brand")
+}
+
+model PmsCategory {
+  categoryId Int @id @default(autoincrement()) @map("category_id")
+
+  name        String @default("") @map("name") @db.VarChar(64)
+  level       Int    @default(1) @map("level")
+  productCnt  Int    @default(0) @map("product_cnt")
+  status      Status @default(ACTIVE) @map("status")
+  keyword     String @default("") @map("keyword")
+  description String @default("") @map("description")
+  sortOrder   Int    @default(-1) @map("sort_order")
+
+  parentId Int @default(-1) @map("parent_id")
+
+  parentCategory  PmsCategory   @relation("ParentCategory", fields: [parentId], references: [categoryId])
+  childCategories PmsCategory[] @relation("ParentCategory")
+  pmsProducts     PmsProduct[]
+
+  @@map("pms_category")
+}
+
+model PmsAlbum {
+  albumId      Int    @id @default(autoincrement()) @map("album_id")
+  name         String @map("name") @db.VarChar(64)
+  albumItemCnt Int    @default(0) @map("album_item_cnt")
+  sortOrder    Int    @default(-1) @map("sort_order")
+  description  String @default("") @map("description")
+
+  @@map("pms_album")
+}

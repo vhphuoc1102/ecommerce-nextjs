@@ -1,0 +1,13 @@
+model FmsFile {
+  fid        Int      @map("fid")
+  resourceId Int      @map("resource_id")
+  fileKind   FileKind @map("file_kind")
+
+  fileName  String?   @map("file_name")
+  fileType  FileType? @map("file_type")
+  objectKey String    @unique @map("object_key")
+  status    Status    @default(ACTIVE) @map("status")
+
+  @@id([fid, fileKind])
+  @@map("fms_file")
+}

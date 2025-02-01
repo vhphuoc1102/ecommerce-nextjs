@@ -1,0 +1,31 @@
+model UmsAdmin {
+  adminId  Int      @id @map("admin_id")
+  amsAdmin AmsAdmin @relation(fields: [adminId], references: [adminId], onDelete: Cascade)
+
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+  username  String @unique @map("username")
+  phone     String @default("") @map("phone")
+  status    Status @default(ACTIVE) @map("status")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+  createId Int      @default(-1) @map("create_id")
+  updateId Int      @default(-1) @map("update_id")
+
+  @@map("ums_admin")
+}
+
+model UmsUser {
+  userId  Int     @id @map("user_id")
+  amsUser AmsUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  name     String?   @default("") @map("name")
+  username String    @unique @map("username")
+  phone    String?   @map("phone")
+  status   Status    @default(ACTIVE) @map("status")
+  gender   Gender?   @map("gender")
+  birthDay DateTime? @map("birthday")
+
+  @@map("ums_user")
+}

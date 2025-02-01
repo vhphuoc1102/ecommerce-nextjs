@@ -1,0 +1,45 @@
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum PublishStatus {
+  PUBLISH
+  DRAFT
+}
+
+enum VERIFY_STATUS {
+  VERIFIED
+  UNVERIFIED
+}
+
+enum NewStatus {
+  NEW
+  LIKE_NEW
+  USED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum FileKind {
+  USER_DEFAULT_AVATAR
+  USER_AVATAR
+  USER_COMMENT
+  PRODUCT
+  ALBUM_ITEM
+  CATEGORY_PIC
+  CATEGORY_LOGO
+  BRAND_PIC
+  BRAND_LOGO
+}
+
+enum FileType {
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  OTHER
+}

@@ -1,0 +1,88 @@
+model AmsUser {
+  userId     Int       @id @default(autoincrement()) @map("user_id")
+  email      String    @unique @map("email") @db.VarChar(241)
+  password   String    @map("password")
+  verifiedTs DateTime? @map("verified_ts")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+
+  umsUser UmsUser?
+
+  @@map("ams_user")
+}
+
+model AmsAdmin {
+  adminId    Int       @id @default(autoincrement()) @map("admin_id")
+  email      String    @unique @map("email") @db.VarChar(241)
+  password   String    @map("password")
+  verifiedTs DateTime? @map("verified_ts")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+
+  umsAdmin              UmsAdmin?
+  amsAdminAccounts      AmsAdminAccount[]
+  amsAdminSession       AmsAdminSession[]
+  amsAdminAuthenticator AmsAdminAuthenticator[]
+
+  @@map("ams_admin")
+}
+
+model AmsAdminAccount {
+  adminId           Int     @map("admin_id")
+  provider          String  @map("provider")
+  providerAccountId String  @map("provider_account_id")
+  refreshToken      String? @map("refresh_token")
+  accessToken       String? @map("access_token")
+  expireTs          Int?    @map("expire_ts")
+  tokenType         String? @map("token_type")
+  scope             String? @map("scope")
+  idToken           String? @map("id_token")
+  sessionState      String? @map("session_state")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+
+  amsAdmin AmsAdmin @relation(fields: [adminId], references: [adminId], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@map("ams_admin_account")
+}
+
+model AmsAdminSession {
+  sessionToken String   @unique @map("session_token")
+  adminId      Int      @map("admin_id")
+  expireTs     DateTime @map("expire_ts")
+  amsAdmin     AmsAdmin @relation(fields: [adminId], references: [adminId], onDelete: Cascade)
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+
+  @@map("ams_admin_session")
+}
+
+model AmsAdminToken {
+  identifier String   @map("identifier")
+  token      String   @map("token")
+  expireTs   DateTime @map("expire_ts")
+
+  @@id([identifier, token])
+  @@map("ams_admin_token")
+}
+
+model AmsAdminAuthenticator {
+  credentialId         String  @unique @map("credential_id")
+  adminId              Int     @map("admin_id")
+  providerAccountId    String  @map("provider_account_id")
+  credentialPublicKey  String  @map("credential_public_key")
+  counter              Int     @map("counter")
+  credentialDeviceType String  @map("credential_device_type")
+  credentialBackedUp   Boolean @map("credential_backed_up")
+  transport            String? @map("transport")
+
+  amsAdmin AmsAdmin @relation(fields: [adminId], references: [adminId], onDelete: Cascade)
+
+  @@id([adminId, credentialId])
+  @@map("ams_admin_authenticator")
+}
