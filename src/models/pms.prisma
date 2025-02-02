@@ -22,11 +22,17 @@ model PmsProduct {
   price          Decimal @default(0) @map("price")
   originalPrice  Decimal @default(0) @map("original_price")
   promotionPrice Decimal @default(0) @map("promotion_price")
+  rate           Float   @default(0) @map("rate")
+  soldCnt        Int     @default(0) @map("sold_cnt")
+  tag            String  @default("") @map("tag")
 
   status        Status        @default(ACTIVE) @map("status")
   publishStatus PublishStatus @default(DRAFT) @map("publish_status")
   newStatus     NewStatus     @default(NEW) @map("new_status")
   verifyStatus  VERIFY_STATUS @default(UNVERIFIED) @map("verify_status")
+
+  pmsComments  PmsComment[]
+  pmsFavorites PmsFavorite[]
 
   @@map("pms_product")
 }
@@ -43,6 +49,7 @@ model PmsSku {
   lowStock       Int     @map("low_stock")
   attribute      String  @map("attribute")
   quantity       Int     @map("quantity")
+  soldCnt        Int     @map("sold_cnt")
 
   @@id([skuId, productId])
   @@map("pms_sku")
@@ -91,4 +98,58 @@ model PmsAlbum {
   description  String @default("") @map("description")
 
   @@map("pms_album")
+}
+
+model PmsComment {
+  commentId Int @id @default(autoincrement()) @map("comment_id")
+
+  productId Int @map("product_id")
+  userId    Int @map("user_id")
+
+  rate       Int    @map("rate")
+  username   String @map("username")
+  userIp     String @map("user_ip")
+  status     Status @default(ACTIVE) @map("status")
+  attribute  String @map("attribute")
+  productCnt Int    @map("quantity")
+  content    String @map("content")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+
+  pmsProduct      PmsProduct        @relation(fields: [productId], references: [productId])
+  PmsCommentReply PmsCommentReply[]
+
+  @@map("pms_comment")
+}
+
+model PmsCommentReply {
+  commentReplyId Int @id @default(autoincrement()) @map("comment_reply_id")
+
+  commentId  Int      @map("comment_id")
+  authorId   Int      @map("author_id")
+  authorType UserType @map("author_type")
+  authorName String   @map("author_name")
+  status     Status   @default(ACTIVE) @map("status")
+  content    String   @map("content")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+
+  pmsComment PmsComment @relation(fields: [commentId], references: [commentId])
+
+  @@map("pms_comment_reply")
+}
+
+model PmsFavorite {
+  favoriteId Int @id @default(autoincrement()) @map("favorite_id")
+  productId  Int @map("product_id")
+  userId     Int @map("user_id")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+
+  pmsProduct PmsProduct @relation(fields: [productId], references: [productId])
+
+  @@map("pms_favorite")
 }

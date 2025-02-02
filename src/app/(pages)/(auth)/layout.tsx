@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import React from "react";
+import ProgressProvider from "@/components/progress-bar-provider";
 
 export const metadata: Metadata = {
   title: "Ecommerce",
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
       <>
+        <ProgressProvider>
           {children}
+        </ProgressProvider>
       </>
   );
 }

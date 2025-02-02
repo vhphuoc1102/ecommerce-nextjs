@@ -5,7 +5,7 @@ import {notFound} from "next/navigation";
 
 const ADMIN_PROTECTED_PATHS = [/\/dashboard\/(.*)/]
 const USER_PROTECTED_PATHS = [
-  /\/cart\/(.*)/,
+  /\/cart/,
   /\/profile\/(.*)/,
   /\/order\/(.*)/
 ]
@@ -27,7 +27,7 @@ const authConfig = {
       // if (!hostName) {
       //   return NextResponse.redirect(new URL(USER_DEFAULT_PATH, USER_HOST));
       // }
-      if(!auth && pathname !== USER_DEFAULT_PATH) {
+      if(!auth && USER_PROTECTED_PATHS.some((path) => path.test(pathname))) {
         return NextResponse.redirect(new URL('/login', request.url));
       }
       else if (!auth) {

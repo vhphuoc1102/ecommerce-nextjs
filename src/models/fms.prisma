@@ -7,6 +7,10 @@ model FmsFile {
   fileType  FileType? @map("file_type")
   objectKey String    @unique @map("object_key")
   status    Status    @default(ACTIVE) @map("status")
+  sortOrder Int       @default(-1) @map("sort_order")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
 
   @@id([fid, fileKind])
   @@map("fms_file")

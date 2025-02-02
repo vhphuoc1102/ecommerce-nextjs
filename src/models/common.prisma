@@ -43,3 +43,8 @@ enum FileType {
   DOCUMENT
   OTHER
 }
+
+enum UserType {
+  ADMIN
+  USER
+}
