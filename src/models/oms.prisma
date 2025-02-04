@@ -1,0 +1,92 @@
+model OmsCartItem {
+  cartItemId Int  @id @default(autoincrement()) @map("cart_item_id")
+  productId  Int  @map("product_id")
+  categoryId Int  @map("category_id")
+  brandId    Int? @map("brand_id")
+  skuId      Int  @map("sku_id")
+  userId     Int  @map("user_id")
+
+  username        String  @map("username")
+  quantity        Int     @default(1)
+  price           Decimal @map("price")
+  attribute       String  @map("attribute")
+  productName     String  @map("product_name")
+  brandName       String  @map("brand_name")
+  productSn       String  @map("product_sn")
+  productTitle    String  @map("product_title")
+  productSubTitle String  @map("product_sub_title")
+  productSkuCode  String  @map("product_sku_code")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+
+  status Status @default(ACTIVE)
+}
+
+model OmsOrder {
+  orderId               Int     @id @default(autoincrement()) @map("order_id")
+  userId                Int     @map("user_id")
+  coupon_id             Int     @map("coupon_id")
+  orderSn               String  @map("order_sn")
+  username              String  @map("username")
+  totalAmount           Decimal @map("total_amount")
+  payAmount             Decimal @map("pay_amount")
+  freightAmount         Decimal @map("freight_amount")
+  promotionAmount       Decimal @map("promotion_amount")
+  giftAmount            Decimal @map("gift_amount")
+  couponAmount          Decimal @map("coupon_amount")
+  discountAmount        Decimal @map("discount_amount")
+  payType               PayType @map("pay_type")
+  deliveryCompany       String  @map("delivery_company")
+  deliverySn            String  @map("delivery_sn")
+  growthPoint           Int     @default(0) @map("growth_point")
+  giftPoint             Int     @default(0) @map("gift_point")
+  billType              String  @map("bill_type") /// 0,1,2 ( 0: no, 1: paper, 2: electronic )
+  billHeader            String  @default("") @map("bill_header")
+  billContent           String  @default("") @map("bill_content")
+  receiverName          String  @default("") @map("receiver_name")
+  receiverPhone         String  @default("") @map("receiver_phone")
+  receiverPostCode      String  @default("") @map("receiver_post_code")
+  receiverProvince      String  @default("") @map("receiver_province")
+  receiverCity          String  @default("") @map("receiver_city")
+  receiverRegion        String  @default("") @map("receiver_region")
+  receiverDetailAddress String  @default("") @map("receiver_detail_address")
+  note                  String  @default("") @map("note")
+
+  orderStatus OrderStatus @default(AWAITING_PAYMENT) @map("order_status")
+  status      Status      @default(ACTIVE) @map("status")
+
+  payTs      DateTime? @map("pay_ts")
+  deliveryTs DateTime? @map("delivery_ts")
+  receiveTs  DateTime? @map("receive_ts")
+  commentTs  DateTime? @map("comment_ts")
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
+
+  OmsOrderItem OmsOrderItem[]
+}
+
+model OmsOrderItem {
+  orderItemId Int    @default(autoincrement()) @map("order_item_id")
+  orderId     Int    @map("order_id")
+  productId   Int    @map("product_id")
+  skuId       Int    @map("sku_id")
+  skuCode     String @map("sku_code")
+  productSn   String @map("product_sn")
+  brandName   String @map("brand_name")
+  categoryId  Int    @map("category_id")
+  attribute   String @map("attribute")
+
+  promotionAmount Decimal @map("promotion_amount")
+  couponAmount    Decimal @map("coupon_amount")
+  giftAmount      Decimal @map("gift_amount")
+  totalAmount     Decimal @map("total_amount")
+
+  giftPoint   Int @default(0) @map("gift_point")
+  growthPoint Int @default(0) @map("growth_point")
+
+  OmsOrder OmsOrder? @relation(fields: [orderId], references: [orderId])
+
+  @@id([orderId, orderItemId])
+}

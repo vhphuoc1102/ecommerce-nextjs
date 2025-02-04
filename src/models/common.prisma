@@ -48,3 +48,19 @@ enum UserType {
   ADMIN
   USER
 }
+
+enum PayType {
+  MOMO
+  VNPAY
+  ZALOPAY
+  CASH
+}
+
+enum OrderStatus {
+  AWAITING_PAYMENT
+  AWAITING_SHIPMENT
+  SHIPPING
+  COMPLETED
+  CLOSED
+  ERROR
+}

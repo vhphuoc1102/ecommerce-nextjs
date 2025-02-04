@@ -25,6 +25,8 @@ model PmsProduct {
   rate           Float   @default(0) @map("rate")
   soldCnt        Int     @default(0) @map("sold_cnt")
   tag            String  @default("") @map("tag")
+  giftPoint      Int     @default(0) @map("gift_point")
+  growthPoint    Int     @default(0) @map("growth_point")
 
   status        Status        @default(ACTIVE) @map("status")
   publishStatus PublishStatus @default(DRAFT) @map("publish_status")

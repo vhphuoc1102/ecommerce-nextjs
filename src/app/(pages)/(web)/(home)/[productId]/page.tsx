@@ -2,8 +2,6 @@ import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import AlbumCarousel from "@/components/album-carousel";
 import {ProductInfo} from "@/libs/types/productType";
 import {Heart, Star, StarHalf} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {ShoppingCartIcon} from "lucide-react";
 import ProductSpecificationTable from "@/components/product-specification-table";
 import FacebookButton from "@/components/facebook-button";
 import ProductInfoForm from "@/components/product-info-form";
@@ -34,6 +32,8 @@ export default function ProductPage() {
     tags: ["tag1", "tag2"],
     favorite: true,
     commentCnt: 100,
+    stock: 100,
+    lowStock: 10,
     albums: [
       {
         albumId: 1,
@@ -174,18 +174,6 @@ export default function ProductPage() {
       },
     ],
     skus: [
-      {
-        skuId: 1,
-        attribute: {
-          "Color": "Black",
-          "Size": "M"
-        },
-        skuName: "Black M",
-        promotePrice: 100000,
-        price: 100000,
-        stock: 100,
-        lowStock: 1
-      }
     ],
     attributes: [{
       attributeId: 1,
@@ -224,7 +212,7 @@ export default function ProductPage() {
                               <p className="text-gray-500 text-sm italic mb-1">Sold {productInfo.soldCnt}</p>
                           )
                       }
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 mb-10 justify-end">
                         <div className="relative">
                           <div className="flex items-center">
                             {
@@ -252,23 +240,19 @@ export default function ProductPage() {
                         (productInfo.attributes &&
                             productInfo.skus &&
                             productInfo.attributes.length > 0 &&
-                            productInfo.skus.length > 0) &&
+                            productInfo.skus.length > 0
+                        ) ||
+                          (productInfo.stock) &&
                           (
-                              <ProductInfoForm attributes={productInfo.attributes} skus={productInfo.skus}/>
+                              <ProductInfoForm
+                                  promotePrice={productInfo.promotePrice}
+                                  price={productInfo.price}
+                                  attributes={productInfo.attributes}
+                                  skus={productInfo.skus}
+                                  stock={productInfo.stock ?? 0}
+                              />
                           )
                       }
-                      <div className="mb-4"/>
-                      <div className="flex gap-2">
-                        <Button variant={"default"} className={"size-12 grow"}>
-                          Buy now
-                        </Button>
-                        <Button
-                            variant={"outline"}
-                            className={"size-12 flex-none min-w-[8rem] text-xs border-primary border-2 text-primary font-semibold hover:text-primary"}>
-                          <ShoppingCartIcon size={16} strokeWidth={2} className={"mr-1"}/>
-                          Add to cart
-                        </Button>
-                      </div>
                       <div className="flex items-center gap-3 mt-auto">
                         <div className="flex items-center gap-2">
                           <Heart size={24} strokeWidth={2} fill={productInfo.favorite ? "#EF4444" : "none"} className="cursor-pointer"/>

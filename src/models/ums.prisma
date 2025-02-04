@@ -20,12 +20,34 @@ model UmsUser {
   userId  Int     @id @map("user_id")
   amsUser AmsUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-  name     String?   @default("") @map("name")
-  username String    @unique @map("username")
-  phone    String?   @map("phone")
-  status   Status    @default(ACTIVE) @map("status")
-  gender   Gender?   @map("gender")
-  birthDay DateTime? @map("birthday")
+  name       String?      @default("") @map("name")
+  username   String       @unique @map("username")
+  phone      String?      @map("phone")
+  status     Status       @default(ACTIVE) @map("status")
+  gender     Gender?      @map("gender")
+  birthDay   DateTime?    @map("birthday")
+  umsAddress UmsAddress[]
 
   @@map("ums_user")
+}
+
+model UmsAddress {
+  addressId Int @id @default(autoincrement()) @map("address_id")
+  userId    Int @map("user_id")
+
+  name      String   @map("name")
+  phone     String   @map("phone")
+  province  String   @map("province")
+  city      String   @map("city")
+  region    String   @map("region")
+  detail    String   @map("detail")
+  postCode  String   @map("post_code")
+  status    Status   @default(ACTIVE) @map("status")
+  isDefault Boolean  @default(false) @map("is_default")
+  createTs  DateTime @default(now()) @map("create_ts")
+  updateTs  DateTime @updatedAt @map("update_ts")
+
+  umsUser UmsUser @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("ums_address")
 }

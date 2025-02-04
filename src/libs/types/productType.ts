@@ -23,7 +23,9 @@ export interface ProductInfo extends ProductCardInfo {
   specification?: Specification,
   albums?: AlbumInfo[]
   skus?: ProductSku[]
-  attributes?: ProductAttribute[]
+  attributes?: ProductAttribute[],
+  stock?: number,
+  lowStock?: number
 }
 
 export interface ProductSku {
@@ -49,5 +51,23 @@ export interface AlbumInfo {
 
 export interface AlbumItem {
   albumItemId: number
+  name?: string
   image: string
+}
+
+export interface CartItem {
+  cartItemId: number,
+  productId: number,
+  skuId: number,
+  stock: number,
+  quantity: number
+  skuCode: string,
+  attribute: string,
+  name: string,
+  title: string,
+  subtitle: string,
+  image: string
+  price: number,
+  promotePrice: number
+  activeStatus: boolean,
 }
