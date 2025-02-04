@@ -25,6 +25,8 @@ export const SignUpSchema = object({
   path: ["verifyPassword"],
 });
 
+export const ProductInfoSchema = object({});
+
 export type FormState = {
   errors?: {
     name?: string[]

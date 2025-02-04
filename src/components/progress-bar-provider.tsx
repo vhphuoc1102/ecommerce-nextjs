@@ -13,7 +13,7 @@ const ProgressProvider = ({ children }: { children: React.ReactNode }) => {
             options={{
               showSpinner: false,
             }}
-            stopDelay={2000}
+            stopDelay={500}
             shallowRouting
         />
       </>

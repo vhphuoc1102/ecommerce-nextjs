@@ -33,10 +33,12 @@ model PmsProduct {
 
   pmsComments  PmsComment[]
   pmsFavorites PmsFavorite[]
+  PmsSku       PmsSku[]
 
   @@map("pms_product")
 }
 
+/// Stock Keeping Unit (SKU) !== Standard Product Unit (SPU)
 model PmsSku {
   skuId     Int @map("sku_id")
   productId Int @map("product_id")
@@ -50,6 +52,8 @@ model PmsSku {
   attribute      String  @map("attribute")
   quantity       Int     @map("quantity")
   soldCnt        Int     @map("sold_cnt")
+
+  pmsProduct PmsProduct @relation(fields: [productId], references: [productId])
 
   @@id([skuId, productId])
   @@map("pms_sku")

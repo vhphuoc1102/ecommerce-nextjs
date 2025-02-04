@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {ShoppingCartIcon} from "lucide-react";
 import ProductSpecificationTable from "@/components/product-specification-table";
 import FacebookButton from "@/components/facebook-button";
+import ProductInfoForm from "@/components/product-info-form";
 
 export default function ProductPage() {
   const productSpecs = new Map<string, string>([
@@ -19,6 +20,7 @@ export default function ProductPage() {
     ["Battery Life", "Up to 10 hours"],
     ["Weight", "1.8 kg"],
   ]);
+
   const productInfo : ProductInfo = {
     productId: 1,
     title: "Product Title Product TitleProduct TitleProduct TitleProduct TitleProduct Title",
@@ -170,10 +172,34 @@ export default function ProductPage() {
           }
         ]
       },
-    ]
+    ],
+    skus: [
+      {
+        skuId: 1,
+        attribute: {
+          "Color": "Black",
+          "Size": "M"
+        },
+        skuName: "Black M",
+        promotePrice: 100000,
+        price: 100000,
+        stock: 100,
+        lowStock: 1
+      }
+    ],
+    attributes: [{
+      attributeId: 1,
+      attributeName: "Color",
+      attributeValues: ["Black", "White", "Red"]
+    },{
+      attributeId: 2,
+      attributeName: "Size",
+      attributeValues: ["S", "M", "L"]
+    }]
   }
-  const filledStars = Math.floor(productInfo.rate);
-  const halfStars = productInfo.rate - filledStars;
+
+  const filledStars = productInfo.rate ? Math.floor(productInfo.rate) : 5;
+  const halfStars = productInfo.rate ? (productInfo.rate - filledStars) : 0;
   return (
       <>
         {
@@ -222,12 +248,16 @@ export default function ProductPage() {
                         </div>
                         <div className="text-xs hover:underline hover:underline-offset-2 cursor-pointer">({productInfo.commentCnt} reviews)</div>
                       </div>
-                      <div className="flex items-end gap-2 justify-end">
-                        <span className="font-extrabold text-[hsl(var(--destructive))] text-3xl">{productInfo.promotePrice}đ</span>
-                        <span className="text-xl font-semibold text-gray-400 line-through">{productInfo.price}đ</span>
-                      </div>
-                      <div className="mb-4">
-                      </div>
+                      {
+                        (productInfo.attributes &&
+                            productInfo.skus &&
+                            productInfo.attributes.length > 0 &&
+                            productInfo.skus.length > 0) &&
+                          (
+                              <ProductInfoForm attributes={productInfo.attributes} skus={productInfo.skus}/>
+                          )
+                      }
+                      <div className="mb-4"/>
                       <div className="flex gap-2">
                         <Button variant={"default"} className={"size-12 grow"}>
                           Buy now
@@ -245,7 +275,7 @@ export default function ProductPage() {
                           <span className="text-sm">Liked</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <FacebookButton url={`${process.env.BASE_URL}/${productInfo.productId}`} description={productInfo.description}/>
+                          <FacebookButton url={`${process.env.BASE_URL}/${productInfo.productId}`} description={productInfo.description ?? ""}/>
                           <span className="text-sm">Share facebook</span>
                         </div>
                       </div>
@@ -277,7 +307,7 @@ export default function ProductPage() {
                     <h1 className="text-2xl font-semibold">Product Specifications</h1>
                   </CardHeader>
                   <CardContent className="px-2">
-                    <ProductSpecificationTable specification={productSpecs}/>
+                    <ProductSpecificationTable detail={productSpecs}/>
                   </CardContent>
                 </Card>
               </div>
