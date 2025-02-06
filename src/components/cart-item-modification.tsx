@@ -24,17 +24,20 @@ export default function CartItemModification({cartItemId, quantity, stock}: { ca
   }
 
   return (
-    <div className="flex gap-10">
-      <Input
-          type="number"
-          name="quantity"
-          id={`${cartItemId}`}
-          className="max-w-24"
-          value={newQuantity}
-          min={0}
-          max={stock}
-          onChange={handleChangeQuantity}
-      />
+    <div className="flex gap-10 items-center">
+      <div className="flex items-center">
+        <span className="mr-3">Quantity: </span>
+        <Input
+            type="number"
+            name="quantity"
+            id={`${cartItemId}`}
+            className="max-w-24"
+            value={newQuantity}
+            min={0}
+            max={stock}
+            onChange={handleChangeQuantity}
+        />
+      </div>
       <Button variant="outline" size="icon" onClick={handleDelete}>
         <Trash2 />
       </Button>

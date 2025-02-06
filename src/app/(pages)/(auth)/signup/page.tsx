@@ -2,8 +2,17 @@ import {GalleryVerticalEnd} from "lucide-react"
 import Image from "next/image";
 import Link from "next/link";
 import {SignupForm} from "@/components/signup-form";
+import {headers} from "next/headers";
+import {redirect} from "next/navigation";
 
-export default function SignupPage() {
+export default async function SignupPage() {
+  const headersList = await headers();
+  const hostName = headersList.get('host');
+
+  if(hostName === process.env.NEXT_PUBLIC_ADMIN_HOST_NAME) {
+    redirect('/login')
+  }
+
   return (
       <div className="grid min-h-svh lg:grid-cols-2">
         <div className="flex flex-col justify-between p-6 md:p-10">

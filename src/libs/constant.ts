@@ -5,3 +5,8 @@ export enum RATE {
   FOUR = 4,
   FIVE = 5,
 }
+
+export enum USER_ROLE {
+  ADMIN = "admin",
+  USER = "user",
+}

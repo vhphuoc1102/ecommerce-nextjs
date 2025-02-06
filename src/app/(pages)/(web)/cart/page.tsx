@@ -106,7 +106,7 @@ export default function CartPage(){
               cartItems.map(
                   (cartItem) => (
                       <Card key={cartItem.cartItemId}>
-                        <CardContent className="p-4 flex items-center h-32">
+                        <CardContent className="p-4 flex items-center h-24">
                           <Checkbox
                             id={`${cartItem.cartItemId}`}
                             checked={selectedItems.includes(cartItem.cartItemId)}

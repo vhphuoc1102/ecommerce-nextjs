@@ -23,10 +23,10 @@ const authConfig = {
   callbacks: {
     authorized({ request, auth }) {
       const { pathname } = request.nextUrl;
-      // let hostName = request.headers.get('host');
-      // if (!hostName) {
-      //   return NextResponse.redirect(new URL(USER_DEFAULT_PATH, USER_HOST));
-      // }
+      const hostName = request.headers.get('host');
+      if (!hostName) {
+        return NextResponse.redirect(new URL(USER_DEFAULT_PATH, USER_HOST));
+      }
       if(!auth && USER_PROTECTED_PATHS.some((path) => path.test(pathname))) {
         return NextResponse.redirect(new URL('/login', request.url));
       }

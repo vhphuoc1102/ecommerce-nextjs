@@ -7,7 +7,7 @@ import {headers} from "next/headers";
 
 export default async function LoginPage() {
   const headersList = await headers();
-  const hostName = headersList.get('host');
+
   return (
       <div className="grid min-h-svh lg:grid-cols-2">
         <div className="flex flex-col justify-between p-6 md:p-10">
