@@ -7,7 +7,6 @@ import {generateFromEmail} from "unique-username-generator";
 import {saltAndHashPassword} from "@/libs/utils";
 import {userAuth} from "@/libs/auth";
 import {AuthError} from "next-auth";
-import {NextResponse} from "next/server";
 
 export const login
     = async (
@@ -58,4 +57,14 @@ export async function signup(
   })
 
   redirect('/login')
+}
+
+export async function signout() {
+  try {
+    await userAuth.signOut()
+  } catch (error) {
+    console.error(error)
+  }
+
+  redirect('/')
 }

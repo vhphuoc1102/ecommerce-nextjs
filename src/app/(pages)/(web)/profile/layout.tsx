@@ -9,6 +9,10 @@ const sidebarNavItems = [
     href: "/profile",
   },
   {
+    title: "Order",
+    href: "/profile/order",
+  },
+  {
     title: "Order History",
     href: "/profile/order-history",
   },
@@ -31,10 +35,10 @@ export default function ProfileLayout({children}: Readonly<{ children: React.Rea
             </div>
             <Separator className="my-6" />
             <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
-              <aside className="-mx-4 lg:w-1/5">
+              <aside className="-mx-4 lg:w-1/5 lg:flex-none">
                 <SidebarNav items={sidebarNavItems} />
               </aside>
-              <div className="flex-1 lg:max-w-2xl">{children}</div>
+              <div className="flex-1 lg:grow">{children}</div>
             </div>
           </div>
         </CardContent>

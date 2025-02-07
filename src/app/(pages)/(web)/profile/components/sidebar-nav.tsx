@@ -4,8 +4,8 @@ import {cva} from "class-variance-authority";
 import { usePathname } from "next/navigation";
 import {cn} from "@/libs/utils";
 import Link from "next/link";
-import React from "react";
-import {Separator} from "@/components/ui/separator";
+import React, {useActionState} from "react";
+import {signout} from "@/action/auth.action";
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
   items: {
@@ -46,12 +46,10 @@ const buttonVariants = cva(
 
 export default function SidebarNav({ className, items, ...props }: SidebarNavProps) {
   const pathname = usePathname()
-
-  const handleSignOut = () => {
-    // Add your sign-out logic here
-    console.log("Sign out clicked");
-  }
-
+  const [, logout, isPending] = useActionState(async() => {
+    window.history.replaceState(null, '', '/')
+    await signout();
+  }, undefined)
   return (
       <nav
           className={cn(
@@ -75,16 +73,17 @@ export default function SidebarNav({ className, items, ...props }: SidebarNavPro
               {item.title}
             </Link>
         ))}
-        <Separator/>
-        <button
-            onClick={handleSignOut}
-            className={cn(
-                buttonVariants({ variant: "ghost" }),
-                "hover:bg-transparent hover:underline justify-start"
-            )}
-        >
-          Sign Out
-        </button>
+        <form action={logout}>
+          <button
+              aria-disabled={isPending}
+              className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "hover:bg-transparent hover:underline justify-start"
+              )}
+          >
+            Sign Out
+          </button>
+        </form>
       </nav>
   )
 }

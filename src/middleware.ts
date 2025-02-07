@@ -6,7 +6,7 @@ import {notFound} from "next/navigation";
 const ADMIN_PROTECTED_PATHS = [/\/dashboard\/(.*)/]
 const USER_PROTECTED_PATHS = [
   /\/cart/,
-  /\/profile\/(.*)/,
+  /\/profile\/(.*)?/,
   /\/order\/(.*)/
 ]
 const AUTH_PUBLIC_PATHS = [
