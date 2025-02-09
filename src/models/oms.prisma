@@ -3,24 +3,26 @@ model OmsCartItem {
   productId  Int  @map("product_id")
   categoryId Int  @map("category_id")
   brandId    Int? @map("brand_id")
-  skuId      Int  @map("sku_id")
+  skuId      Int? @map("sku_id")
   userId     Int  @map("user_id")
 
   username        String  @map("username")
   quantity        Int     @default(1)
   price           Decimal @map("price")
-  attribute       String  @map("attribute")
+  attribute       String  @default("") @map("attribute")
   productName     String  @map("product_name")
   brandName       String  @map("brand_name")
   productSn       String  @map("product_sn")
   productTitle    String  @map("product_title")
-  productSubTitle String  @map("product_sub_title")
-  productSkuCode  String  @map("product_sku_code")
+  productSubTitle String  @default("") @map("product_sub_title")
+  productSkuCode  String? @map("product_sku_code")
 
   createTs DateTime @default(now()) @map("create_ts")
   updateTs DateTime @updatedAt @map("update_ts")
 
   status Status @default(ACTIVE)
+
+  @@map("oms_cart_item")
 }
 
 model OmsOrder {
@@ -65,6 +67,8 @@ model OmsOrder {
   updateTs DateTime @updatedAt @map("update_ts")
 
   OmsOrderItem OmsOrderItem[]
+
+  @@map("oms_order")
 }
 
 model OmsOrderItem {
@@ -89,4 +93,5 @@ model OmsOrderItem {
   OmsOrder OmsOrder? @relation(fields: [orderId], references: [orderId])
 
   @@id([orderId, orderItemId])
+  @@map("oms_order_item")
 }

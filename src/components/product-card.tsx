@@ -1,13 +1,12 @@
 "use client"
 import {Card, CardContent, CardFooter} from "@/components/ui/card";
 import {Heart, Star, StarHalf} from "lucide-react";
-import {ProductCardInfo} from "@/libs/types/productType";
+import {ProductCardInfo} from "@/libs/types/product";
 import {useRouter} from "next/navigation";
 import { useSession } from "next-auth/react"
 
 export default function ProductCard(info: ProductCardInfo) {
   const { data: session } = useSession();
-
   const router = useRouter()
 
   const getRate = () => {

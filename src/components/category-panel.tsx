@@ -1,96 +1,15 @@
 "use client"
 import { Card, CardContent } from "@/components/ui/card";
+import { CategoryItem } from "@/libs/types/category";
 import { DevicePhoneMobileIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 
-interface CategoryItem {
-  id: number,
-  icon?: string,
-  name: string,
-  children?: CategoryItem[]
-}
-
-export default function CategoryPanel() {
+export default function CategoryPanel({categories} : {categories: CategoryItem[]}) {
   const [hoveredCategory, setHoveredCategory] = useState<CategoryItem | null>(null);
   const [isDetailHovered, setIsDetailHovered] = useState<boolean>(false);
-  const categories: CategoryItem[] =[
-        {
-          id: 1,
-          name: 'Electronics',
-          children: [
-            {
-              id: 1,
-              name: 'Mobile Phones',
-              children: [
-                {
-                  id: 1,
-                  name: 'Samsung',
-                  children: []
-                },
-                {
-                  id: 2,
-                  name: 'Apple',
-                  children: []
-                }
-              ]
-            },
-            {
-              id: 2,
-              name: 'Laptops',
-              children: [
-                {
-                  id: 1,
-                  name: 'Dell',
-                  children: []
-                },
-                {
-                  id: 2,
-                  name: 'HP',
-                  children: []
-                }
-              ]
-            }
-          ]
-        },
-  {
-    id: 2,
-        name: 'Electronics 2',
-      children: [
-    {
-      id: 1,
-      name: 'Mobile Phones',
-      children: [
-        {
-          id: 1,
-          name: 'Samsung',
-          children: []
-        },
-        {
-          id: 2,
-          name: 'Apple',
-          children: []
-        }
-      ]
-    },
-    {
-      id: 2,
-      name: 'Laptops',
-      children: [
-        {
-          id: 1,
-          name: 'Dell',
-          children: []
-        },
-        {
-          id: 2,
-          name: 'HP',
-          children: []
-        }
-      ]
-    }
-  ]
+  const handleClick = (id: number) => {
+
   }
-];
   return (
     <div>
       <Card className="w-[15rem]">
@@ -101,6 +20,7 @@ export default function CategoryPanel() {
               className="p-2 hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm flex justify-between"
               onMouseEnter={() => setHoveredCategory(category)}
               onMouseLeave={() => !isDetailHovered && setHoveredCategory(null)}
+              onClick={() => handleClick(category.id)}
             >
               <div className="flex items-center gap-1">
                 {category.icon ? (
@@ -110,10 +30,14 @@ export default function CategoryPanel() {
                 )}
                 <span>{category.name}</span>
               </div>
-              <ChevronRightIcon className="size-4" />
+              {
+                category.children && category.children.length > 0 && (
+                      <ChevronRightIcon className="size-4" />
+                  )
+              }
             </div>
           ))}
-          {hoveredCategory && (
+          {hoveredCategory && hoveredCategory.children && hoveredCategory.children.length > 0 && (
               <div
                   className="absolute left-[15rem] bg-white z-40 min-w-[48rem]"
                   onMouseEnter={() => setIsDetailHovered(true)}
@@ -128,11 +52,17 @@ export default function CategoryPanel() {
                       {hoveredCategory.children && hoveredCategory.children.length > 0 && (
                           <div className="flex flex-wrap gap-3 text-sm cursor-pointer">
                             {hoveredCategory.children.map((child) => (
-                                <div key={child.id} className="flex flex-col gap-1">
+                                <div
+                                    key={child.id} className="flex flex-col gap-1"
+                                    onClick={() => handleClick(child.id)}
+                                >
                                   <span className="font-semibold hover:font-bold hover:text-primary">{child.name}</span>
                                   <div>
                                     {child.children && child.children.length > 0 && child.children.map((subChild) => (
-                                        <div key={subChild.id}>
+                                        <div
+                                            key={subChild.id}
+                                            onClick={() => handleClick(subChild.id)}
+                                        >
                                           <span className="hover:font-semibold hover:text-primary">{subChild.name}</span>
                                         </div>
                                     ))}

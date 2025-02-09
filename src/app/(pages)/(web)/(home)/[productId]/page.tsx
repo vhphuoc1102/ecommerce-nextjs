@@ -1,190 +1,26 @@
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import AlbumCarousel from "@/components/album-carousel";
-import {ProductInfo} from "@/libs/types/productType";
+
 import {Heart, Star, StarHalf} from "lucide-react";
 import ProductSpecificationTable from "@/components/product-specification-table";
 import FacebookButton from "@/components/facebook-button";
 import ProductInfoForm from "@/components/product-info-form";
+import {getProductDetail} from "@/action/product.action";
+import {ProductInfo} from "@/libs/types/product";
+import {userAuth} from "@/libs/auth";
 
-export default function ProductPage() {
-  const productSpecs = new Map<string, string>([
-    ["Brand", "TechCorp"],
-    ["Model", "X1000"],
-    ["Color", "Midnight Black"],
-    ["Screen Size", "15.6 inches"],
-    ["Processor", "Intel Core i7"],
-    ["RAM", "16GB"],
-    ["Storage", "512GB SSD"],
-    ["Battery Life", "Up to 10 hours"],
-    ["Weight", "1.8 kg"],
-  ]);
-
-  const productInfo : ProductInfo = {
-    productId: 1,
-    title: "Product Title Product TitleProduct TitleProduct TitleProduct TitleProduct Title",
-    subtitle: "Product Subtitle Product SubtitleProduct SubtitleProduct SubtitleProduct SubtitleProduct Subtitle",
-    price: 100000,
-    promotePrice: 80000,
-    rate: 4.5,
-    soldCnt: 100,
-    image: "https://avatars.githubusercontent.com/u/124599?v=4",
-    description: "Product Description",
-    tags: ["tag1", "tag2"],
-    favorite: true,
-    commentCnt: 100,
-    stock: 100,
-    lowStock: 10,
-    albums: [
-      {
-        albumId: 1,
-        items: [
-          {
-            albumItemId: 1,
-            image: "https://avatars.githubusercontent.com/u/124599?v=4",
-          },
-          {
-            albumItemId: 2,
-            image: "",
-          }
-        ]
-      },
-      {
-        albumId: 2,
-        items: [
-          {
-            albumItemId: 1,
-            image: "",
-          },
-          {
-            albumItemId: 2,
-            image: "",
-          },
-          {
-            albumItemId: 3,
-            image: "",
-          },
-          {
-            albumItemId: 4,
-            image: "",
-          },
-          {
-            albumItemId: 5,
-            image: "",
-          }
-        ]
-      },
-      {
-        albumId: 3,
-        items: [
-          {
-            albumItemId: 1,
-            image: "",
-          },
-          {
-            albumItemId: 2,
-            image: "",
-          },
-          {
-            albumItemId: 3,
-            image: "",
-          },
-          {
-            albumItemId: 4,
-            image: "",
-          },
-          {
-            albumItemId: 5,
-            image: "",
-          }
-        ]
-      },{
-        albumId: 4,
-        items: [
-          {
-            albumItemId: 1,
-            image: "",
-          },
-          {
-            albumItemId: 2,
-            image: "",
-          },
-          {
-            albumItemId: 3,
-            image: "",
-          },
-          {
-            albumItemId: 4,
-            image: "",
-          },
-          {
-            albumItemId: 5,
-            image: "",
-          }
-        ]
-      },
-      {
-        albumId: 5,
-        items: [
-          {
-            albumItemId: 1,
-            image: "",
-          },
-          {
-            albumItemId: 2,
-            image: "",
-          },
-          {
-            albumItemId: 3,
-            image: "",
-          },
-          {
-            albumItemId: 4,
-            image: "",
-          },
-          {
-            albumItemId: 5,
-            image: "",
-          }
-        ]
-      },
-      {
-        albumId: 6,
-        items: [
-          {
-            albumItemId: 1,
-            image: "",
-          },
-          {
-            albumItemId: 2,
-            image: "",
-          },
-          {
-            albumItemId: 3,
-            image: "",
-          },
-          {
-            albumItemId: 4,
-            image: "",
-          },
-          {
-            albumItemId: 5,
-            image: "",
-          }
-        ]
-      },
-    ],
-    skus: [
-    ],
-    attributes: [{
-      attributeId: 1,
-      attributeName: "Color",
-      attributeValues: ["Black", "White", "Red"]
-    },{
-      attributeId: 2,
-      attributeName: "Size",
-      attributeValues: ["S", "M", "L"]
-    }]
-  }
+export default async function ProductPage(
+    {
+      params,
+    }: {
+      params: Promise<{ productId: string }>
+    }
+) {
+  const session = await userAuth.auth();
+  const productId = parseInt((await params).productId)
+  if(!productId) return <div/>
+  const productInfo: ProductInfo | null = await getProductDetail(productId)
+  if(!productInfo) return <div/>
 
   const filledStars = productInfo.rate ? Math.floor(productInfo.rate) : 5;
   const halfStars = productInfo.rate ? (productInfo.rate - filledStars) : 0;
@@ -207,10 +43,9 @@ export default function ProductPage() {
                           )
                       }
                       {
-                        productInfo.soldCnt &&
-                          (
-                              <p className="text-gray-500 text-sm italic mb-1">Sold {productInfo.soldCnt}</p>
-                          )
+                        (productInfo.soldCnt != null && productInfo.soldCnt !== 0) && (
+                          <p className="text-gray-500 text-sm italic mb-1">Sold {productInfo.soldCnt}</p>
+                        )
                       }
                       <div className="flex items-center gap-2 mb-10 justify-end">
                         <div className="relative">
@@ -245,6 +80,8 @@ export default function ProductPage() {
                           (productInfo.stock) &&
                           (
                               <ProductInfoForm
+                                  userId={session?.user._id}
+                                  productId={productId}
                                   promotePrice={productInfo.promotePrice}
                                   price={productInfo.price}
                                   attributes={productInfo.attributes}
@@ -291,7 +128,7 @@ export default function ProductPage() {
                     <h1 className="text-2xl font-semibold">Product Specifications</h1>
                   </CardHeader>
                   <CardContent className="px-2">
-                    <ProductSpecificationTable detail={productSpecs}/>
+                    <ProductSpecificationTable specification={productInfo.specification}/>
                   </CardContent>
                 </Card>
               </div>

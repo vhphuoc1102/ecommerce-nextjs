@@ -8,7 +8,7 @@ enum PublishStatus {
   DRAFT
 }
 
-enum VERIFY_STATUS {
+enum VerifyStatus {
   VERIFIED
   UNVERIFIED
 }
@@ -28,7 +28,8 @@ enum FileKind {
   USER_DEFAULT_AVATAR
   USER_AVATAR
   USER_COMMENT
-  PRODUCT
+  PRODUCT_PIC
+  PRODUCT_DOC
   ALBUM_ITEM
   CATEGORY_PIC
   CATEGORY_LOGO
@@ -63,4 +64,31 @@ enum OrderStatus {
   COMPLETED
   CLOSED
   ERROR
+}
+
+enum InputType {
+  MANUAL
+  LIST
+}
+
+enum RelateStatus {
+  RELATE
+  UNRELATE
+}
+
+enum AttributeType {
+  PARAM
+  SPECIFICATION
+}
+
+enum SearchType {
+  TEXT
+  RANGE
+  NO_SEARCH
+}
+
+enum SubjectType {
+  PRODUCT
+  BRAND
+  CATEGORY
 }

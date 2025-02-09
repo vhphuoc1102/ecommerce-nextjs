@@ -1,83 +1,61 @@
 "use client"
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
-import { CartItem } from "@/libs/types/productType";
+import { CartItem } from "@/libs/types/cart";
 import {Checkbox} from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {Trash2} from "lucide-react";
-import React, { useState } from "react";
+import React, {useEffect, useState } from "react";
 import CartItemModification from "@/components/cart-item-modification";
+import {useSession} from "next-auth/react";
+import {getCartItems, deleteCartItems, updateStatus} from "@/action/cart.action";
 
 export default function CartPage(){
-  const cartItems: CartItem[] = [
-    {
-      cartItemId: 1,
-      productId: 101,
-      skuId: 1001,
-      quantity: 2,
-      skuCode: "SKU001",
-      attribute: "Color: Red, Size: M",
-      name: "Red T-Shirt",
-      title: "Stylish Red T-Shirt",
-      subtitle: "Comfortable and trendy",
-      image: "",
-      price: 200,
-      promotePrice: 150,
-      activeStatus: true,
-      stock: 100
-    },
-    {
-      cartItemId: 2,
-      productId: 102,
-      skuId: 1002,
-      quantity: 1,
-      skuCode: "SKU002",
-      attribute: "Color: Blue, Size: L",
-      name: "Blue Jeans",
-      title: "Classic Blue Jeans",
-      subtitle: "Durable and stylish",
-      image: "",
-      price: 500,
-      promotePrice: 450,
-      activeStatus: true,
-      stock: 100
-    },
-    {
-      cartItemId: 3,
-      productId: 103,
-      skuId: 1003,
-      quantity: 3,
-      skuCode: "SKU003",
-      attribute: "Color: Black, Size: S",
-      name: "Black Jacket",
-      title: "Elegant Black Jacket",
-      subtitle: "Warm and fashionable",
-      image: "",
-      price: 1000,
-      promotePrice: 900,
-      activeStatus: true,
-      stock: 100
-    },
-  ];
-
+  const { data: session } = useSession();
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
-  const handleSelectAll = () => {
+  useEffect(() => {
+    if (session && session.user && session.user._id) {
+      getCartItems(session.user._id).then((items) => {
+        setCartItems(items);
+        setSelectedItems(
+            items
+                .filter(item => item.activeStatus)
+                .map(item => item.cartItemId));
+      });
+    }
+  }, [session]);
+
+  const handleSelectAll = async () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
       setSelectedItems(cartItems.map(item => item.cartItemId));
+      await updateStatus(cartItems.map(item => item.cartItemId), true);
     } else {
+      await updateStatus(selectedItems, false);
       setSelectedItems([]);
     }
   };
 
-  const handleCheckboxChange = (cartItemId: number) => {
+  const handleCheckboxChange = async (cartItemId: number) => {
     if (selectedItems.includes(cartItemId)) {
       setSelectedItems(selectedItems.filter(id => id !== cartItemId));
+      await updateStatus([cartItemId], false);
     } else {
       setSelectedItems([...selectedItems, cartItemId]);
+      await updateStatus([cartItemId], true);
     }
   };
+
+  const deleteAll = async () => {
+    await deleteCartItems(selectedItems);
+    setSelectedItems([]);
+  }
+
+  const handleDeleteItem = (cartItemId: number) => {
+    setCartItems(cartItems.filter(item => item.cartItemId !== cartItemId));
+  }
 
   return (
     <div className="flex justify-center w-full">
@@ -95,7 +73,10 @@ export default function CartPage(){
                 Select All
               </label>
             </div>
-            <Button variant="outline" size="icon" className="mr-4">
+            <Button
+                variant="outline" size="icon" className="mr-4"
+                onClick={deleteAll}
+            >
               <Trash2 />
             </Button>
           </div>
@@ -135,6 +116,7 @@ export default function CartPage(){
                           </div>
                           <div className="ml-auto">
                             <CartItemModification
+                                onDelete={() => handleDeleteItem(cartItem.cartItemId)}
                                 cartItemId={cartItem.cartItemId}
                                 quantity={cartItem.quantity}
                                 stock={cartItem.stock}

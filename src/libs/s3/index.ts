@@ -1,8 +1,9 @@
-import { S3Client } from "@aws-sdk/client-s3";
+"use server";
+import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import { USER_ROLE } from "@/libs/constant";
 import { createPresignedPost, PresignedPostOptions } from "@aws-sdk/s3-presigned-post";
 
-export const s3Client = new S3Client({region: process.env.AWS_REGION});
+const s3Client = new S3Client({region: process.env.AWS_REGION});
 
 export const createPostURL = async (role: USER_ROLE, key: string, contentType: string) => {
   const config: PresignedPostOptions = {
@@ -30,3 +31,25 @@ export const createPostURL = async (role: USER_ROLE, key: string, contentType: s
     };
   }
 };
+
+export const putObject = async (file: Buffer, objectKey: string) => {
+  const params = {
+    Bucket: process.env.PRODUCT_BUCKET_NAME,
+    Key: objectKey,
+    Body: file,
+  }
+  const command = new PutObjectCommand(params);
+  try {
+    const response = await s3Client.send(command);
+    console.log("File uploaded successfully:", response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getPresignedURL = async (objectKey: string | undefined) => {
+  if(!objectKey) {
+    return null;
+  }
+  return `https://${process.env.PRODUCT_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${objectKey}`;
+}

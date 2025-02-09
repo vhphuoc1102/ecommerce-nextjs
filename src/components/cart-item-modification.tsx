@@ -4,23 +4,37 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Trash2} from "lucide-react";
 import React from "react";
+import {deleteCartItems, updateQuantity} from "@/action/cart.action";
 
-export default function CartItemModification({cartItemId, quantity, stock}: { cartItemId: number, quantity: number, stock: number }) {
+export default function CartItemModification(
+    {
+      cartItemId,
+      quantity,
+      stock,
+      onDelete
+    }: {
+      cartItemId: number,
+      quantity: number,
+      stock: number,
+      onDelete: () => void
+    }) {
   const [newQuantity, setNewQuantity] = React.useState(quantity);
-  const handleChangeQuantity = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeQuantity = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantity = parseInt(event.target.value, 10);
     if (newQuantity < 0) {
       return;
     } else {
       setNewQuantity(newQuantity);
       if (newQuantity !== quantity) {
-        // dispatch update quantity action
+        await updateQuantity(cartItemId, newQuantity);
       }
     }
   }
 
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    await deleteCartItems([cartItemId]);
+    onDelete();
   }
 
   return (

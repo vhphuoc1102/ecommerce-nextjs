@@ -1,8 +1,11 @@
-import {Specification} from "@/libs/types/productType";
+import {Specification} from "@/libs/types/product";
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
-export default function ProductSpecificationTable({detail} : Specification) {
-  const specEntries = Array.from(detail.entries())
+export default function ProductSpecificationTable({specification} : {
+  specification?: Specification
+}) {
+  if(!specification) return <div/>
+  const specEntries = Array.from(specification.detail.entries())
   return (
       <Table>
         <TableCaption>For more detail, &nbsp;

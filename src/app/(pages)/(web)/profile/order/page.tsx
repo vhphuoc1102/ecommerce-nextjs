@@ -1,7 +1,13 @@
-export default function OrderPage() {
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+export default function OrderProfilePage() {
   return (
       <>
-        <h1>order</h1>
+        <RadioGroup>
+          <div>
+
+          </div>
+        </RadioGroup>
       </>
   );
 }

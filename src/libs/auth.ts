@@ -25,6 +25,7 @@ export const userAuth = NextAuth({
               credentials.password as string,
               user.password,
           );
+          console.log("===========================user",user);
           if (isMatch) {
             return user;
           }
@@ -41,13 +42,15 @@ export const userAuth = NextAuth({
   },
   callbacks: {
     async jwt({ user, trigger, session, token }) {
+      console.log("============================jwtUser",user)
       if (user) {
         token.user = {
-          id: user.id,
+          _id: user.userId,
           email: user.email,
           role: 'USER'
         };
       }
+      console.log("============================jwt",token.user);
       if (trigger === 'update' && session) {
         token.user = {
           ...token.user as object,
@@ -60,6 +63,7 @@ export const userAuth = NextAuth({
       session: Session;
       token: JWT;
     }) => {
+      console.log("============================session",token.user);
       if (token) {
         session.user = token.user as { id?: number | null; role?: 'USER' | 'ADMIN' } & User;
       }

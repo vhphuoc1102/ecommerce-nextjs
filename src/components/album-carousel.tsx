@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
-import {AlbumInfo} from "@/libs/types/productType";
+import {AlbumInfo} from "@/libs/types/product";
 import ReactImageMagnify from "react-image-magnify";
 
 export default function AlbumCarousel({ albums }: { albums?: AlbumInfo[] }) {

@@ -1,27 +1,34 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react";
-import { ProductAttribute, ProductSku } from "@/libs/types/productType";
+import React, { useEffect, useMemo, useState } from "react";
+import { ProductAttribute, ProductSku } from "@/libs/types/product";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import _ from "lodash";
 import { cn } from "@/libs/utils";
 import { Input } from "@/components/ui/input";
 import { ShoppingCartIcon } from "lucide-react";
+import * as cartAction from '@/action/cart.action'
+import {useRouter} from "next/navigation";
 
 export default function ProductInfoForm({
+  userId,
+  productId,
   promotePrice,
   price,
   attributes,
   skus,
   stock,
 }: {
+  userId: number | undefined | null,
+  productId: number,
   promotePrice: number | undefined;
   price: number | undefined;
   attributes?: ProductAttribute[];
   skus?: ProductSku[];
   stock?: number;
 }) {
+  const router = useRouter();
   const [skuStock, setSkuStock] = useState(0);
   const [skuPrice, setSkuPrice] = useState<number | undefined>(undefined);
   const [skuAttribute, setSkuAttribute] = useState<Record<string, string>>({});
@@ -66,6 +73,16 @@ export default function ProductInfoForm({
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(Number(event.target.value));
   };
+
+  const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if(!userId) {
+      router.push('/login');
+      return;
+    }
+    const skuId = skus?.find((sku) => _.isEqual(sku.attribute, skuAttribute))?.skuId;
+    await cartAction.add(productId, skuId, quantity, userId);
+  }
 
   return (
     <div className="mb-8">
@@ -171,6 +188,7 @@ export default function ProductInfoForm({
             disabled={
               ((!stock || stock === 0) && (skuStock === 0 || isDisableAll)) || quantity === 0
             }
+            onClick={handleAddToCart}
           >
             <ShoppingCartIcon size={16} strokeWidth={2} className={"mr-1"} />
             Add to cart

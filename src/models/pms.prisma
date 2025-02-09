@@ -1,11 +1,13 @@
 model PmsProduct {
   productId Int @id @default(autoincrement()) @map("product_id")
 
-  brandId    Int @map("brand_id")
-  categoryId Int @map("category_id")
+  brandId          Int @map("brand_id")
+  categoryId       Int @map("category_id")
+  attributeGroupId Int @map("attribute_group_id")
 
-  pmsBrand    PmsBrand    @relation(fields: [brandId], references: [brandId])
-  pmsCategory PmsCategory @relation(fields: [categoryId], references: [categoryId])
+  pmsBrand          PmsBrand          @relation(fields: [brandId], references: [brandId])
+  pmsCategory       PmsCategory       @relation(fields: [categoryId], references: [categoryId])
+  pmsAttributeGroup PmsAttributeGroup @relation(fields: [attributeGroupId], references: [attributeGroupId])
 
   name           String  @map("name") @db.VarChar(64)
   title          String  @map("title")
@@ -31,11 +33,16 @@ model PmsProduct {
   status        Status        @default(ACTIVE) @map("status")
   publishStatus PublishStatus @default(DRAFT) @map("publish_status")
   newStatus     NewStatus     @default(NEW) @map("new_status")
-  verifyStatus  VERIFY_STATUS @default(UNVERIFIED) @map("verify_status")
+  verifyStatus  VerifyStatus  @default(UNVERIFIED) @map("verify_status")
 
-  pmsComments  PmsComment[]
-  pmsFavorites PmsFavorite[]
-  PmsSku       PmsSku[]
+  pmsComments       PmsComment[]
+  pmsFavorites      PmsFavorite[]
+  pmsSkus           PmsSku[]
+  pmsAttributeValue PmsAttributeValue[]
+  pmsAlbums         PmsAlbum[]
+
+  createTs DateTime @default(now()) @map("create_ts")
+  updateTs DateTime @updatedAt @map("update_ts")
 
   @@map("pms_product")
 }
@@ -45,15 +52,15 @@ model PmsSku {
   skuId     Int @map("sku_id")
   productId Int @map("product_id")
 
-  skuCode        String  @map("sku_code")
-  price          Decimal @map("price")
-  promotionPrice Decimal @map("promotion_price")
-  originalPrice  Decimal @map("original_price")
-  stock          Int     @map("stock")
-  lowStock       Int     @map("low_stock")
-  attribute      String  @map("attribute")
-  quantity       Int     @map("quantity")
-  soldCnt        Int     @map("sold_cnt")
+  skuCode        String   @map("sku_code")
+  price          Decimal  @default(0) @map("price")
+  promotionPrice Decimal? @map("promotion_price")
+  originalPrice  Decimal  @map("original_price")
+  stock          Int      @map("stock")
+  lowStock       Int      @map("low_stock")
+  attribute      String   @map("attribute")
+  quantity       Int      @default(0) @map("quantity")
+  soldCnt        Int      @default(0) @map("sold_cnt")
 
   pmsProduct PmsProduct @relation(fields: [productId], references: [productId])
 
@@ -87,23 +94,91 @@ model PmsCategory {
   description String @default("") @map("description")
   sortOrder   Int    @default(-1) @map("sort_order")
 
-  parentId Int @default(-1) @map("parent_id")
-
-  parentCategory  PmsCategory   @relation("ParentCategory", fields: [parentId], references: [categoryId])
-  childCategories PmsCategory[] @relation("ParentCategory")
-  pmsProducts     PmsProduct[]
+  childCategories       PmsCategory[]          @relation("parentChildren")
+  parentCategory        PmsCategory?           @relation("parentChildren", fields: [parentId], references: [categoryId])
+  parentId              Int?                   @map("parent_id")
+  pmsProducts           PmsProduct[]
+  pmsCategoryAttributes PmsCategoryAttribute[]
 
   @@map("pms_category")
 }
 
+model PmsAttributeGroup {
+  attributeGroupId Int @id @default(autoincrement()) @map("attribute_group_id")
+
+  name        String @map("name")
+  sort        Int    @default(-1) @map("sort")
+  description String @default("") @map("description")
+
+  pmsAttributes PmsAttribute[]
+  pmsProduct    PmsProduct[]
+
+  @@map("pms_attribute_group")
+}
+
+model PmsAttribute {
+  attributeId      Int           @id @default(autoincrement()) @map("attribute_id")
+  attributeGroupId Int           @map("attribute_group_id")
+  name             String        @map("name")
+  inputType        InputType     @default(LIST) @map("input_type")
+  inputList        String        @default("") @map("input_list")
+  relateStatus     RelateStatus  @default(UNRELATE) @map("relate_status")
+  attributeType    AttributeType @map("attribute_type")
+  sortOrder        Int           @default(-1) @map("sort_order")
+  searchType       SearchType    @default(NO_SEARCH) @map("search_type")
+
+  pmsAttributeGroup     PmsAttributeGroup      @relation(fields: [attributeGroupId], references: [attributeGroupId])
+  pmsAttributeValues    PmsAttributeValue[]
+  pmsCategoryAttributes PmsCategoryAttribute[]
+
+  @@map("pms_attribute")
+}
+
+model PmsAttributeValue {
+  attributeValueId Int    @id @default(autoincrement()) @map("attribute_value_id")
+  attributeId      Int    @map("attribute_id")
+  productId        Int    @map("product_id")
+  value            String @map("value")
+
+  pmsAttribute PmsAttribute @relation(fields: [attributeId], references: [attributeId])
+  pmsProduct   PmsProduct   @relation(fields: [productId], references: [productId])
+
+  @@map("pms_attribute_value")
+}
+
+model PmsCategoryAttribute {
+  categoryId  Int @map("category_id")
+  attributeId Int @map("attribute_id")
+
+  pmsCategory  PmsCategory  @relation(fields: [categoryId], references: [categoryId])
+  pmsAttribute PmsAttribute @relation(fields: [attributeId], references: [attributeId])
+
+  @@id([categoryId, attributeId])
+  @@map("pms_category_attribute")
+}
+
 model PmsAlbum {
   albumId      Int    @id @default(autoincrement()) @map("album_id")
+  productId    Int    @map("product_id")
   name         String @map("name") @db.VarChar(64)
   albumItemCnt Int    @default(0) @map("album_item_cnt")
   sortOrder    Int    @default(-1) @map("sort_order")
   description  String @default("") @map("description")
 
+  pmsProduct    PmsProduct     @relation(fields: [productId], references: [productId])
+  pmsAlbumItems PmsAlbumItem[]
+
   @@map("pms_album")
+}
+
+model PmsAlbumItem {
+  albumItemId Int    @id @default(autoincrement()) @map("album_item_id")
+  albumId     Int    @map("album_id")
+  name        String @default("") @map("name") @db.VarChar(64)
+
+  pmsAlbum PmsAlbum @relation(fields: [albumId], references: [albumId])
+
+  @@map("pms_album_item")
 }
 
 model PmsComment {
