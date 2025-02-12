@@ -148,7 +148,78 @@ export const getProductInfos = async (productIds: number[]): Promise<ProductCard
 }
 
 export const getList = async (request: ProductListRequest) => {
-  return [];
+  const whereConditions: Prisma.PmsProductWhereInput[] = [];
+  if (request.categoryId) {
+    whereConditions.push({
+      categoryId: request.categoryId
+    });
+  }
+  if (request.brandId) {
+    whereConditions.push({
+      brandId: request.brandId
+    });
+  }
+  if (request.keyword) {
+    whereConditions.push({
+      OR: [
+        {
+          name: {
+            contains: request.keyword
+          }
+        },
+        {
+          title: {
+            contains: request.keyword
+          }
+        },
+        {
+          subtitle: {
+            contains: request.keyword
+          }
+        },
+        {
+          pmsBrand: {
+            OR: [
+              {
+                name: {
+                  contains: request.keyword
+                }
+              },
+              {
+                description: {
+                  contains: request.keyword
+                }
+              }
+            ]
+          }
+        }
+      ]
+    });
+  }
+
+  if (request.publishStatus) {
+    whereConditions.push({
+      publishStatus: request.publishStatus
+    });
+  }
+
+  if (request.verifyStatus) {
+    whereConditions.push({
+      verifyStatus: request.verifyStatus
+    });
+  }
+
+  const conditions: Prisma.PmsProductFindManyArgs = {
+    include: {
+      pmsBrand: true,
+      pmsCategory: true
+    },
+    where: {
+      OR: whereConditions
+    }
+  }
+
+  return pmsProductDao.findWithConditions(conditions);
 }
 
 const getProductSpec = async (productId: number) => {

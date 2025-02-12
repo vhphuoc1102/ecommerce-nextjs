@@ -10,7 +10,8 @@ declare module 'next-auth' {
 
   export interface User extends DefaultUser {
     id?: number;
-    userId: number;
+    userId?: number;
+    adminId?: number;
     role?: UserRole;
   }
 }

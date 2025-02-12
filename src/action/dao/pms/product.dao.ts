@@ -116,3 +116,7 @@ export const findByIdWithBrandAndCategory = async (productId: number) => {
     }
   })
 }
+
+export const findWithConditions = async (conditions: Prisma.PmsProductFindManyArgs) => {
+  return prisma.pmsProduct.findMany(conditions);
+};

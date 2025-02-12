@@ -8,7 +8,7 @@ export default function PaymentInformation() {
       <RadioGroup
           name="payment"
           onValueChange={(value) => handleValueChange(value)}
-          value={"CASH"}
+          defaultValue={"CASH"}
           className="flex flex-col gap-6"
       >
         <div className="flex items-center gap-4 w-full border-2 rounded-lg p-4">
